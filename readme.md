@@ -1,4 +1,4 @@
-# 📏 Medición de Alturas Forestales PWA v1.1
+# 📏 Medición de Alturas Forestales PWA v1.2
 
 ## 📋 Descripción
 Aplicación web progresiva (PWA) para el registro profesional de mediciones de altura en árboles forestales, utilizando los métodos **265** e **India**. Diseñada para trabajo de campo sin conexión a internet.
@@ -11,7 +11,9 @@ Aplicación web progresiva (PWA) para el registro profesional de mediciones de a
 - **Gestión de lotes:** Crear, guardar y reabrir lotes
 - **Edición completa:** Todos los datos son editables
 - **Cálculo automático:** Suma de alturas totales por árbol
-- **Exportación CSV:** Formato compatible con Excel
+- **Exportación CSV individual:** Por lote específico
+- **Exportación CSV global:** TODOS los lotes en un archivo
+- **Estadísticas globales:** Vista de todos los lotes medidos
 - **100% Offline:** Funciona sin conexión después de la primera carga
 - **PWA Instalable:** Se instala como app nativa
 
@@ -71,7 +73,15 @@ El sistema calcula automáticamente:
 - Puede reabrir y continuar más tarde
 
 ### 4. **Exportar Datos**
-- Click "📥 Exportar CSV" para descargar
+
+#### Opción A: Exportar Lote Actual
+- Click "📥 Exportar Lote Actual" para descargar solo el lote activo
+
+#### Opción B: Exportar TODOS los Lotes
+- Click "📊 Exportar TODOS los Lotes" 
+- Descarga un CSV con todos los lotes guardados más el lote actual
+- El archivo incluye una columna adicional con la fecha de medición
+- Nombre del archivo: `alturas_TODOS_LOS_LOTES_[fecha].csv`
 
 ## 📱 Instalación
 
@@ -100,17 +110,21 @@ medicion-alturas/
 
 ## 💾 Estructura del CSV Exportado
 
+### CSV de Lote Individual:
 ```csv
 Lote,Arbol,Tipo,Segmento,Altura_Acumulada_m,Largo_Segmento_m,Altura_Total_m
 Bosque Norte,1,265,1,3.26,3.26,9.56
 Bosque Norte,1,265,2,5.29,2.03,9.56
 Bosque Norte,1,265,3,9.56,4.27,9.56
-Bosque Norte,1,India,1,2.85,2.85,8.75
-Bosque Norte,1,India,2,6.25,3.40,8.75
-Bosque Norte,1,India,3,8.75,2.50,8.75
-Bosque Norte,2,265,1,4.75,4.75,12.30
-Bosque Norte,2,265,2,8.90,4.15,12.30
-Bosque Norte,2,265,3,12.30,3.40,12.30
+```
+
+### CSV de TODOS los Lotes:
+```csv
+Lote,Arbol,Tipo,Segmento,Altura_Acumulada_m,Largo_Segmento_m,Altura_Total_m,Fecha_Medicion
+Bosque Norte,1,265,1,3.26,3.26,9.56,15/11/2024
+Bosque Norte,1,265,2,5.29,2.03,9.56,15/11/2024
+Bosque Sur,1,India,1,2.85,2.85,8.75,16/11/2024
+Bosque Sur,1,India,2,6.25,3.40,8.75,16/11/2024
 ```
 
 ### Columnas del CSV:
@@ -121,6 +135,7 @@ Bosque Norte,2,265,3,12.30,3.40,12.30
 - **Altura_Acumulada_m:** Altura desde el suelo hasta ese punto
 - **Largo_Segmento_m:** Largo real del segmento (calculado automáticamente)
 - **Altura_Total_m:** Altura total del árbol (último valor acumulado)
+- **Fecha_Medicion:** Fecha cuando se guardó el lote (solo en exportación global)
 
 ## 🛠️ Características Técnicas
 
@@ -133,7 +148,9 @@ Bosque Norte,2,265,3,12.30,3.40,12.30
 - **Nuevo:** Crear lote desde cero
 - **Abrir:** Continuar lote guardado
 - **Guardar:** Almacenar en memoria del dispositivo
-- **Exportar:** Descargar como CSV
+- **Exportar Lote:** Descargar CSV del lote actual
+- **Exportar Todo:** Descargar CSV con TODOS los lotes
+- **Estadísticas:** Ver totales globales de todos los lotes
 
 ### Validaciones
 - Alturas con 2 decimales precisos
@@ -172,7 +189,26 @@ Bosque Norte,2,265,3,12.30,3.40,12.30
 ## 📊 Diferencias con App de Inventario
 
 | Característica | Inventario (DAP) | Medición Alturas |
-|---------------|------------------|------------------|
+|## 📝 Historial de Versiones
+
+### v1.2 (Noviembre 2024)
+- ✅ Exportación global de todos los lotes en un solo CSV
+- ✅ Estadísticas globales en el resumen
+- ✅ Columna de fecha en exportación global
+- ✅ Botón destacado para exportar todo
+
+### v1.1 (Noviembre 2024)
+- ✅ Sistema de alturas acumulativas
+- ✅ Cálculo automático de largos de segmentos
+- ✅ Validaciones mejoradas
+
+### v1.0 (Noviembre 2024)
+- ✅ Versión inicial
+- ✅ Métodos 265 e India
+- ✅ Gestión de lotes
+- ✅ PWA instalable
+
+---------------|------------------|------------------|
 | Medición | Diámetro único | Alturas acumulativas con segmentos |
 | Métodos | N/A | 265 e India |
 | Flujo | Lineal | Por árbol/tipo |
@@ -205,11 +241,13 @@ Bosque Norte,2,265,3,12.30,3.40,12.30
 
 ## 🚀 Actualizaciones Futuras
 
+- [x] Exportación global de todos los lotes (v1.2 ✅)
 - [ ] Sincronización en la nube
 - [ ] Gráficos de distribución de alturas
 - [ ] Fotos por árbol
 - [ ] GPS por medición
 - [ ] Cálculo de volumen
+- [ ] Importar datos desde CSV
 
 ## 📱 Compatibilidad
 
@@ -221,10 +259,10 @@ Bosque Norte,2,265,3,12.30,3.40,12.30
 
 ## 👨‍💻 Desarrollo
 
-**Versión:** 1.1  
+**Versión:** 1.2  
 **Fecha:** Noviembre 2024  
 **Stack:** HTML5, CSS3, JavaScript ES6, PWA  
-**Actualización:** Sistema de alturas acumulativas con cálculo de largos
+**Actualización:** Sistema de alturas acumulativas + Exportación global de todos los lotes
 
 ---
 

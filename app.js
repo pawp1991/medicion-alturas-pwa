@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('btnSiguienteArbol').addEventListener('click', siguienteArbol);
     document.getElementById('btnGuardarLote').addEventListener('click', guardarLote);
     document.getElementById('btnExportar').addEventListener('click', exportarCSV);
+    document.getElementById('btnExportarTodo').addEventListener('click', exportarTodoCSV);
     document.getElementById('btnLimpiar').addEventListener('click', limpiarTodo);
     
     // Listeners de cambios
@@ -423,7 +424,66 @@ function exportarCSV() {
     link.download = filename;
     link.click();
     
-    mostrarMensaje('CSV exportado con altura acumulada y largo de segmentos', 'success');
+    mostrarMensaje('CSV del lote actual exportado exitosamente', 'success');
+}
+
+// Exportar TODOS los lotes a CSV
+function exportarTodoCSV() {
+    // Verificar que hay datos para exportar
+    const hayDatosActuales = estadoApp.medicionesGuardadas.length > 0;
+    const hayLotesGuardados = estadoApp.lotesGuardados.length > 0;
+    
+    if (!hayDatosActuales && !hayLotesGuardados) {
+        mostrarMensaje('No hay datos para exportar', 'error');
+        return;
+    }
+    
+    // Generar CSV con todos los datos
+    let csv = 'Lote,Arbol,Tipo,Segmento,Altura_Acumulada_m,Largo_Segmento_m,Altura_Total_m,Fecha_Medicion\n';
+    
+    // Exportar lotes guardados
+    let totalArboles = 0;
+    let totalLotes = 0;
+    
+    estadoApp.lotesGuardados.forEach(lote => {
+        const fecha = lote.fecha ? new Date(lote.fecha).toLocaleDateString() : '';
+        lote.mediciones.forEach(medicion => {
+            medicion.segmentos.forEach(segmento => {
+                csv += `${lote.nombre},${medicion.arbol},${medicion.tipo},${segmento.numero},`;
+                csv += `${segmento.alturaAcumulada.toFixed(2)},${segmento.largo.toFixed(2)},`;
+                csv += `${medicion.alturaTotal},${fecha}\n`;
+            });
+        });
+        totalLotes++;
+        totalArboles += obtenerTotalArboles(lote.mediciones);
+    });
+    
+    // Agregar lote actual si tiene mediciones
+    if (hayDatosActuales && estadoApp.loteActual) {
+        const fechaActual = new Date().toLocaleDateString();
+        estadoApp.medicionesGuardadas.forEach(medicion => {
+            medicion.segmentos.forEach(segmento => {
+                csv += `${estadoApp.loteActual},${medicion.arbol},${medicion.tipo},${segmento.numero},`;
+                csv += `${segmento.alturaAcumulada.toFixed(2)},${segmento.largo.toFixed(2)},`;
+                csv += `${medicion.alturaTotal},${fechaActual}\n`;
+            });
+        });
+        totalLotes++;
+        totalArboles += obtenerTotalArboles(estadoApp.medicionesGuardadas);
+    }
+    
+    // Crear blob y descargar
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const fecha = new Date().toISOString().split('T')[0];
+    const filename = `alturas_TODOS_LOS_LOTES_${fecha}.csv`;
+    
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    link.click();
+    
+    const totalMediciones = csv.split('\n').length - 2; // Restar header y última línea vacía
+    mostrarMensaje(`✅ CSV exportado: ${totalLotes} lotes, ${totalArboles} árboles, ${totalMediciones} registros totales`, 'success');
 }
 
 // Limpiar todo
@@ -471,6 +531,30 @@ function actualizarResumen() {
     
     if (estadoApp.medicionesGuardadas.length === 0) {
         resumen.innerHTML = '<p class="empty-message">No hay mediciones guardadas aún</p>';
+        
+        // Mostrar estadísticas globales si hay lotes guardados
+        if (estadoApp.lotesGuardados.length > 0) {
+            let totalLotesGuardados = estadoApp.lotesGuardados.length;
+            let totalArbolesGuardados = 0;
+            let totalMedicionesGuardadas = 0;
+            
+            estadoApp.lotesGuardados.forEach(lote => {
+                totalArbolesGuardados += obtenerTotalArboles(lote.mediciones);
+                totalMedicionesGuardadas += lote.mediciones.length;
+            });
+            
+            resumen.innerHTML += `
+                <div style="margin-top: 15px; padding: 15px; background: #fff3e0; border-radius: 8px;">
+                    <strong>📊 Estadísticas Globales:</strong><br>
+                    <small>
+                        • Lotes guardados: ${totalLotesGuardados}<br>
+                        • Total de árboles: ${totalArbolesGuardados}<br>
+                        • Total de mediciones: ${totalMedicionesGuardadas}
+                    </small>
+                </div>
+            `;
+        }
+        
         return;
     }
     
@@ -502,15 +586,39 @@ function actualizarResumen() {
         `;
     }).join('');
     
-    // Agregar estadísticas
+    // Agregar estadísticas del lote actual
     const totalArboles = Object.keys(arboles).length;
     const totalMediciones = estadoApp.medicionesGuardadas.length;
     
     resumen.innerHTML += `
         <div style="margin-top: 10px; padding: 10px; background: #e3f2fd; border-radius: 6px;">
-            <strong>Total: ${totalArboles} árboles | ${totalMediciones} mediciones</strong>
+            <strong>Lote actual: ${totalArboles} árboles | ${totalMediciones} mediciones</strong>
         </div>
     `;
+    
+    // Mostrar estadísticas globales
+    if (estadoApp.lotesGuardados.length > 0) {
+        let totalLotesGuardados = estadoApp.lotesGuardados.length;
+        let totalArbolesGuardados = 0;
+        let totalMedicionesGuardadas = 0;
+        
+        estadoApp.lotesGuardados.forEach(lote => {
+            totalArbolesGuardados += obtenerTotalArboles(lote.mediciones);
+            totalMedicionesGuardadas += lote.mediciones.length;
+        });
+        
+        resumen.innerHTML += `
+            <div style="margin-top: 10px; padding: 10px; background: #fff3e0; border-radius: 6px;">
+                <strong>📊 Total Global:</strong><br>
+                <small>
+                    • Lotes guardados: ${totalLotesGuardados}<br>
+                    • Lote actual: ${estadoApp.loteActual || 'Sin nombre'}<br>
+                    • Total árboles (todos los lotes): ${totalArbolesGuardados + totalArboles}<br>
+                    • Total mediciones (todos los lotes): ${totalMedicionesGuardadas + totalMediciones}
+                </small>
+            </div>
+        `;
+    }
 }
 
 // Ver detalle de medición
@@ -653,6 +761,8 @@ function mostrarMensaje(mensaje, tipo) {
         font-weight: 500;
         z-index: 2000;
         animation: slideIn 0.3s ease;
+        max-width: 90%;
+        text-align: center;
     `;
     
     switch(tipo) {
@@ -670,9 +780,12 @@ function mostrarMensaje(mensaje, tipo) {
     msgDiv.textContent = mensaje;
     document.body.appendChild(msgDiv);
     
+    // Mensajes largos duran más tiempo
+    const duracion = mensaje.length > 50 ? 4000 : 3000;
+    
     setTimeout(() => {
         msgDiv.remove();
-    }, 3000);
+    }, duracion);
 }
 
 // Click fuera del modal para cerrar

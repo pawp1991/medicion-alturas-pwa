@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#1976d2">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Medición de Alturas v1.1</title>
+    <title>Medición de Alturas v1.2</title>
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="stylesheet" href="styles.css">
@@ -16,7 +16,7 @@
         <!-- Header -->
         <header>
             <h1>📏 Medición de Alturas</h1>
-            <span class="version">v1.1</span>
+            <span class="version">v1.2</span>
         </header>
 
         <!-- Información del Lote -->
@@ -125,11 +125,21 @@
                     💾 Guardar Lote
                 </button>
                 <button id="btnExportar" class="btn btn-success">
-                    📥 Exportar CSV
+                    📥 Exportar Lote Actual
                 </button>
                 <button id="btnLimpiar" class="btn btn-danger">
                     🗑️ Limpiar Todo
                 </button>
+            </div>
+            
+            <!-- Exportación global -->
+            <div style="margin-top: 15px;">
+                <button id="btnExportarTodo" class="btn btn-warning" style="width: 100%;">
+                    📊 Exportar TODOS los Lotes (Global)
+                </button>
+                <small style="display: block; text-align: center; margin-top: 5px; color: #757575;">
+                    Descarga un solo CSV con todos los lotes guardados más el lote actual
+                </small>
             </div>
         </div>
 

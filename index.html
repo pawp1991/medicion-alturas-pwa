@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1976d2">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Medición de Alturas v1.1</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>📏 Medición de Alturas</h1>
+            <span class="version">v1.1</span>
+        </header>
+
+        <!-- Información del Lote -->
+        <div class="form-section">
+            <h2>Información del Lote</h2>
+            
+            <div class="form-group">
+                <label for="lote">Nombre del Lote</label>
+                <input type="text" id="lote" placeholder="Ej: Bosque Norte">
+            </div>
+
+            <div class="lote-actions">
+                <button id="btnNuevoLote" class="btn btn-primary">
+                    📂 Nuevo Lote
+                </button>
+                <button id="btnAbrirLote" class="btn btn-info">
+                    📁 Abrir Lote Guardado
+                </button>
+            </div>
+
+            <!-- Lista de lotes guardados (oculta inicialmente) -->
+            <div id="lotesGuardados" class="lotes-list" style="display:none;"></div>
+        </div>
+
+        <!-- Medición de Árbol -->
+        <div class="form-section">
+            <h2>Medición de Árbol</h2>
+            
+            <div class="tree-info">
+                <div class="form-group">
+                    <label for="numeroArbol">Número de Árbol</label>
+                    <input type="number" id="numeroArbol" value="1" min="1">
+                </div>
+
+                <div class="form-group">
+                    <label for="tipoMedicion">Tipo de Medición</label>
+                    <select id="tipoMedicion">
+                        <option value="265">265</option>
+                        <option value="India">India</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Estado actual -->
+            <div class="current-status">
+                <span>Árbol: <strong id="statusArbol">1</strong></span>
+                <span>Tipo: <strong id="statusTipo">265</strong></span>
+                <span>Segmentos: <strong id="statusSegmentos">0</strong></span>
+            </div>
+        </div>
+
+        <!-- Ingreso de Segmentos -->
+        <div class="form-section">
+            <h2>Registro de Segmentos</h2>
+            
+            <!-- Nota informativa -->
+            <div style="background: #e3f2fd; padding: 10px; border-radius: 6px; margin-bottom: 15px;">
+                <small>📏 <strong>Sistema Acumulativo:</strong> Ingrese la altura desde el suelo hasta el punto de medición. 
+                El largo de cada segmento se calcula automáticamente.</small>
+            </div>
+            
+            <div class="segment-input">
+                <div class="input-row">
+                    <div class="form-group">
+                        <label for="numeroSegmento">Segmento N°</label>
+                        <input type="number" id="numeroSegmento" value="1" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="altura">Altura Acumulada (m)</label>
+                        <input type="number" id="altura" placeholder="Ej: 3.26, 5.29, 9.56..." step="0.01" min="0">
+                    </div>
+                </div>
+                
+                <button id="btnAgregarSegmento" class="btn btn-primary">
+                    ➕ Agregar Segmento
+                </button>
+            </div>
+
+            <!-- Lista de segmentos actual -->
+            <div id="segmentosActuales" class="segments-list">
+                <h3>Segmentos del Árbol Actual</h3>
+                <div id="listaSegmentos"></div>
+            </div>
+
+            <!-- Botones de guardado -->
+            <div class="save-actions">
+                <button id="btnGuardarMedicion" class="btn btn-success">
+                    💾 Guardar Árbol/Tipo/Segmentos
+                </button>
+                <button id="btnSiguienteArbol" class="btn btn-warning" style="display:none;">
+                    ➡️ Siguiente Árbol
+                </button>
+            </div>
+        </div>
+
+        <!-- Resumen del Lote -->
+        <div class="form-section">
+            <h2>Resumen del Lote</h2>
+            <div id="resumenLote" class="summary">
+                <p>No hay mediciones guardadas aún</p>
+            </div>
+            
+            <!-- Acciones del lote -->
+            <div class="lote-final-actions">
+                <button id="btnGuardarLote" class="btn btn-info">
+                    💾 Guardar Lote
+                </button>
+                <button id="btnExportar" class="btn btn-success">
+                    📥 Exportar CSV
+                </button>
+                <button id="btnLimpiar" class="btn btn-danger">
+                    🗑️ Limpiar Todo
+                </button>
+            </div>
+        </div>
+
+        <!-- Modal de edición (inicialmente oculto) -->
+        <div id="modalEdicion" class="modal" style="display:none;">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3>Editar Medición</h3>
+                <div id="edicionContenido"></div>
+            </div>
+        </div>
+
+        <!-- Estado de guardado -->
+        <div id="estadoGuardado" class="save-status">
+            Guardado automático activo
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

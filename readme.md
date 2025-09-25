@@ -1,4 +1,4 @@
-# 📏 Medición de Alturas Forestales PWA v1.2
+# 📏 Medición de Alturas Forestales PWA v1.3
 
 ## 📋 Descripción
 Aplicación web progresiva (PWA) para el registro profesional de mediciones de altura en árboles forestales, utilizando los métodos **265** e **India**. Diseñada para trabajo de campo sin conexión a internet.
@@ -6,11 +6,11 @@ Aplicación web progresiva (PWA) para el registro profesional de mediciones de a
 ## ✨ Características Principales
 
 ### 🎯 Funcionalidades Core
-- **Dos métodos de medición:** 265 e India
+- **Dos métodos de medición:** India (primero) y 265 (segundo)
 - **Registro por segmentos:** Medición segmentada con altura comercial
 - **Gestión de lotes:** Crear, guardar y reabrir lotes
 - **Edición completa:** Todos los datos son editables
-- **Cálculo automático:** Suma de alturas totales por árbol
+- **Cálculo automático:** Largos de segmentos y alturas totales
 - **Exportación CSV individual:** Por lote específico
 - **Exportación CSV global:** TODOS los lotes en un archivo
 - **Estadísticas globales:** Vista de todos los lotes medidos
@@ -22,11 +22,11 @@ Aplicación web progresiva (PWA) para el registro profesional de mediciones de a
 ```
 Lote
 ├── Árbol 1
-│   ├── Medición 265
+│   ├── Medición India
 │   │   ├── Segmento 1: altura acumulada (largo del segmento)
 │   │   ├── Segmento 2: altura acumulada (largo del segmento)
 │   │   └── Segmento n: altura acumulada (largo del segmento)
-│   └── Medición India
+│   └── Medición 265
 │       ├── Segmento 1: altura acumulada (largo del segmento)
 │       ├── Segmento 2: altura acumulada (largo del segmento)
 │       └── Segmento n: altura acumulada (largo del segmento)
@@ -55,14 +55,14 @@ El sistema calcula automáticamente:
 - Click en "📂 Nuevo Lote"
 
 ### 2. **Medición de Árbol**
-- **Árbol 1 - Tipo 265:**
+- **Árbol 1 - Tipo India:** (primero)
   - Agregar segmento 1: 3.26m (altura desde suelo)
   - Agregar segmento 2: 5.29m (altura acumulada)
   - Agregar segmento 3: 9.56m (altura acumulada)
   - El sistema calcula automáticamente el largo de cada segmento
   - Click "💾 Guardar Árbol/Tipo/Segmentos"
   
-- **Árbol 1 - Tipo India:** (automático después de 265)
+- **Árbol 1 - Tipo 265:** (automático después de India)
   - Agregar segmentos con alturas acumulativas
   - Click "💾 Guardar Árbol/Tipo/Segmentos"
   
@@ -113,9 +113,12 @@ medicion-alturas/
 ### CSV de Lote Individual:
 ```csv
 Lote,Arbol,Tipo,Segmento,Altura_Acumulada_m,Largo_Segmento_m,Altura_Total_m
-Bosque Norte,1,265,1,3.26,3.26,9.56
-Bosque Norte,1,265,2,5.29,2.03,9.56
-Bosque Norte,1,265,3,9.56,4.27,9.56
+Bosque Norte,1,India,1,3.26,3.26,9.56
+Bosque Norte,1,India,2,5.29,2.03,9.56
+Bosque Norte,1,India,3,9.56,4.27,9.56
+Bosque Norte,1,265,1,4.15,4.15,11.25
+Bosque Norte,1,265,2,7.80,3.65,11.25
+Bosque Norte,1,265,3,11.25,3.45,11.25
 ```
 
 ### CSV de TODOS los Lotes:
@@ -191,6 +194,11 @@ Bosque Sur,1,India,2,6.25,3.40,8.75,16/11/2024
 | Característica | Inventario (DAP) | Medición Alturas |
 |## 📝 Historial de Versiones
 
+### v1.3 (Noviembre 2024)
+- ✅ Cambio de orden: India primero, luego 265
+- ✅ Mejora en flujo de trabajo de campo
+- ✅ Actualización de interfaz y lógica
+
 ### v1.2 (Noviembre 2024)
 - ✅ Exportación global de todos los lotes en un solo CSV
 - ✅ Estadísticas globales en el resumen
@@ -259,10 +267,10 @@ Bosque Sur,1,India,2,6.25,3.40,8.75,16/11/2024
 
 ## 👨‍💻 Desarrollo
 
-**Versión:** 1.2  
+**Versión:** 1.3  
 **Fecha:** Noviembre 2024  
 **Stack:** HTML5, CSS3, JavaScript ES6, PWA  
-**Actualización:** Sistema de alturas acumulativas + Exportación global de todos los lotes
+**Actualización:** Orden mejorado - India primero, luego 265
 
 ---
 

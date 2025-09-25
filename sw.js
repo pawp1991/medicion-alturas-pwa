@@ -1,4 +1,4 @@
-const CACHE_NAME = 'medicion-alturas-v1.2';
+const CACHE_NAME = 'medicion-alturas-v1.3';
 const urlsToCache = [
     './',
     './index.html',

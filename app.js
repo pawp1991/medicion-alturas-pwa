@@ -2,7 +2,7 @@
 let estadoApp = {
     loteActual: '',
     arbolActual: 1,
-    tipoActual: '265',
+    tipoActual: 'India',
     segmentosTemporales: [],
     medicionesGuardadas: [],
     lotesGuardados: []
@@ -62,13 +62,13 @@ function nuevoLote() {
     // Resetear estado para nuevo lote
     estadoApp.loteActual = nombreLote;
     estadoApp.arbolActual = 1;
-    estadoApp.tipoActual = '265';
+    estadoApp.tipoActual = 'India';
     estadoApp.segmentosTemporales = [];
     estadoApp.medicionesGuardadas = [];
     
     // Actualizar campos
     document.getElementById('numeroArbol').value = 1;
-    document.getElementById('tipoMedicion').value = '265';
+    document.getElementById('tipoMedicion').value = 'India';
     
     actualizarVista();
     guardarEstado();
@@ -117,13 +117,13 @@ function cargarLote(index) {
     estadoApp.loteActual = lote.nombre;
     estadoApp.medicionesGuardadas = lote.mediciones || [];
     estadoApp.arbolActual = obtenerSiguienteArbol();
-    estadoApp.tipoActual = '265';
+    estadoApp.tipoActual = 'India';
     estadoApp.segmentosTemporales = [];
     
     // Actualizar campos
     document.getElementById('lote').value = lote.nombre;
     document.getElementById('numeroArbol').value = estadoApp.arbolActual;
-    document.getElementById('tipoMedicion').value = '265';
+    document.getElementById('tipoMedicion').value = 'India';
     document.getElementById('lotesGuardados').style.display = 'none';
     
     actualizarVista();
@@ -319,15 +319,15 @@ function guardarMedicion() {
     document.getElementById('altura').value = '';
     
     // Cambiar tipo de medición o pasar a siguiente árbol
-    if (estadoApp.tipoActual === '265') {
-        // Cambiar a India para el mismo árbol
-        estadoApp.tipoActual = 'India';
-        document.getElementById('tipoMedicion').value = 'India';
-        mostrarMensaje(`Árbol ${estadoApp.arbolActual} - Tipo 265 guardado (${alturaTotal.toFixed(2)}m). Ahora mida con tipo India`, 'success');
+    if (estadoApp.tipoActual === 'India') {
+        // Cambiar a 265 para el mismo árbol
+        estadoApp.tipoActual = '265';
+        document.getElementById('tipoMedicion').value = '265';
+        mostrarMensaje(`Árbol ${estadoApp.arbolActual} - India guardado (${alturaTotal.toFixed(2)}m). Ahora mida con método 265`, 'success');
     } else {
         // Ya se midió con ambos tipos, mostrar opción de siguiente árbol
         document.getElementById('btnSiguienteArbol').style.display = 'block';
-        mostrarMensaje(`Árbol ${estadoApp.arbolActual} completado (265 e India)`, 'success');
+        mostrarMensaje(`Árbol ${estadoApp.arbolActual} completado (India y 265). Puede continuar con el siguiente árbol`, 'success');
     }
     
     actualizarVista();
@@ -337,11 +337,11 @@ function guardarMedicion() {
 // Siguiente árbol
 function siguienteArbol() {
     estadoApp.arbolActual++;
-    estadoApp.tipoActual = '265';
+    estadoApp.tipoActual = 'India';
     estadoApp.segmentosTemporales = [];
     
     document.getElementById('numeroArbol').value = estadoApp.arbolActual;
-    document.getElementById('tipoMedicion').value = '265';
+    document.getElementById('tipoMedicion').value = 'India';
     document.getElementById('numeroSegmento').value = 1;
     document.getElementById('altura').value = '';
     document.getElementById('btnSiguienteArbol').style.display = 'none';
@@ -406,9 +406,18 @@ function exportarCSV() {
     }
     
     // Generar CSV con altura acumulada y largo del segmento
+    // Ordenar para mostrar India primero, luego 265
+    const medicionesOrdenadas = [...estadoApp.medicionesGuardadas].sort((a, b) => {
+        if (a.arbol === b.arbol) {
+            if (a.tipo === 'India' && b.tipo === '265') return -1;
+            if (a.tipo === '265' && b.tipo === 'India') return 1;
+        }
+        return a.arbol - b.arbol;
+    });
+    
     let csv = 'Lote,Arbol,Tipo,Segmento,Altura_Acumulada_m,Largo_Segmento_m,Altura_Total_m\n';
     
-    estadoApp.medicionesGuardadas.forEach(medicion => {
+    medicionesOrdenadas.forEach(medicion => {
         medicion.segmentos.forEach(segmento => {
             csv += `${estadoApp.loteActual},${medicion.arbol},${medicion.tipo},${segmento.numero},${segmento.alturaAcumulada.toFixed(2)},${segmento.largo.toFixed(2)},${medicion.alturaTotal}\n`;
         });
@@ -447,7 +456,17 @@ function exportarTodoCSV() {
     
     estadoApp.lotesGuardados.forEach(lote => {
         const fecha = lote.fecha ? new Date(lote.fecha).toLocaleDateString() : '';
-        lote.mediciones.forEach(medicion => {
+        
+        // Ordenar mediciones: India primero, luego 265
+        const medicionesOrdenadas = [...lote.mediciones].sort((a, b) => {
+            if (a.arbol === b.arbol) {
+                if (a.tipo === 'India' && b.tipo === '265') return -1;
+                if (a.tipo === '265' && b.tipo === 'India') return 1;
+            }
+            return a.arbol - b.arbol;
+        });
+        
+        medicionesOrdenadas.forEach(medicion => {
             medicion.segmentos.forEach(segmento => {
                 csv += `${lote.nombre},${medicion.arbol},${medicion.tipo},${segmento.numero},`;
                 csv += `${segmento.alturaAcumulada.toFixed(2)},${segmento.largo.toFixed(2)},`;
@@ -461,7 +480,17 @@ function exportarTodoCSV() {
     // Agregar lote actual si tiene mediciones
     if (hayDatosActuales && estadoApp.loteActual) {
         const fechaActual = new Date().toLocaleDateString();
-        estadoApp.medicionesGuardadas.forEach(medicion => {
+        
+        // Ordenar mediciones actuales: India primero, luego 265
+        const medicionesOrdenadas = [...estadoApp.medicionesGuardadas].sort((a, b) => {
+            if (a.arbol === b.arbol) {
+                if (a.tipo === 'India' && b.tipo === '265') return -1;
+                if (a.tipo === '265' && b.tipo === 'India') return 1;
+            }
+            return a.arbol - b.arbol;
+        });
+        
+        medicionesOrdenadas.forEach(medicion => {
             medicion.segmentos.forEach(segmento => {
                 csv += `${estadoApp.loteActual},${medicion.arbol},${medicion.tipo},${segmento.numero},`;
                 csv += `${segmento.alturaAcumulada.toFixed(2)},${segmento.largo.toFixed(2)},`;
@@ -492,7 +521,7 @@ function limpiarTodo() {
         estadoApp = {
             loteActual: '',
             arbolActual: 1,
-            tipoActual: '265',
+            tipoActual: 'India',
             segmentosTemporales: [],
             medicionesGuardadas: [],
             lotesGuardados: estadoApp.lotesGuardados // Mantener lotes guardados
@@ -501,7 +530,7 @@ function limpiarTodo() {
         // Limpiar campos
         document.getElementById('lote').value = '';
         document.getElementById('numeroArbol').value = '1';
-        document.getElementById('tipoMedicion').value = '265';
+        document.getElementById('tipoMedicion').value = 'India';
         document.getElementById('numeroSegmento').value = '1';
         document.getElementById('altura').value = '';
         
@@ -569,6 +598,13 @@ function actualizarResumen() {
     
     resumen.innerHTML = Object.keys(arboles).map(arbol => {
         const mediciones = arboles[arbol];
+        // Ordenar para mostrar India primero, luego 265
+        mediciones.sort((a, b) => {
+            if (a.tipo === 'India' && b.tipo === '265') return -1;
+            if (a.tipo === '265' && b.tipo === 'India') return 1;
+            return 0;
+        });
+        
         const tipos = mediciones.map(m => m.tipo).join(', ');
         const alturas = mediciones.map(m => `${m.tipo}: ${m.alturaTotal}m`).join(' | ');
         
@@ -577,7 +613,7 @@ function actualizarResumen() {
                 <div class="summary-info">
                     <strong>Árbol ${arbol}</strong>
                     <br>
-                    <small>Tipos: ${tipos} | ${alturas}</small>
+                    <small>Métodos: ${tipos} | ${alturas}</small>
                 </div>
                 <div class="summary-actions">
                     <button class="btn-edit" onclick="event.stopPropagation(); editarMedicion(${arbol})">✏️</button>
@@ -625,10 +661,17 @@ function actualizarResumen() {
 function verDetalleMedicion(arbol) {
     const mediciones = estadoApp.medicionesGuardadas.filter(m => m.arbol == arbol);
     
+    // Ordenar: India primero, luego 265
+    mediciones.sort((a, b) => {
+        if (a.tipo === 'India' && b.tipo === '265') return -1;
+        if (a.tipo === '265' && b.tipo === 'India') return 1;
+        return 0;
+    });
+    
     let detalle = `<h3>Árbol ${arbol}</h3>`;
     
     mediciones.forEach(med => {
-        detalle += `<h4>Tipo: ${med.tipo}</h4>`;
+        detalle += `<h4>Método: ${med.tipo}</h4>`;
         detalle += '<table style="width:100%; border-collapse: collapse;">';
         detalle += '<tr style="background:#e3f2fd;"><th style="padding:8px; border:1px solid #ddd;">Segmento</th><th style="padding:8px; border:1px solid #ddd;">Altura Acum.</th><th style="padding:8px; border:1px solid #ddd;">Largo</th></tr>';
         
@@ -713,7 +756,7 @@ function cargarDatosGuardados() {
         // Restaurar campos
         document.getElementById('lote').value = estadoApp.loteActual || '';
         document.getElementById('numeroArbol').value = estadoApp.arbolActual || 1;
-        document.getElementById('tipoMedicion').value = estadoApp.tipoActual || '265';
+        document.getElementById('tipoMedicion').value = estadoApp.tipoActual || 'India';
         
         actualizarVista();
     }
